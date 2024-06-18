@@ -1,8 +1,18 @@
-function App() {
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { PrincipalLayout } from "./layout/PrincipalLayout";
+import { Home } from "./pages/Home";
+import { DrugDetails } from "./components/DrugDetails";
+
+function App(): JSX.Element {
   return (
-    <>
-      <h1>Hola FDA</h1>
-    </>
+    <BrowserRouter>
+      <Routes>
+        <Route element={<PrincipalLayout />}>
+          <Route path="/" element={<Home />} />
+          <Route path="/:id" element={<DrugDetails />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
   );
 }
 

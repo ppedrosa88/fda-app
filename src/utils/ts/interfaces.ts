@@ -1,16 +1,16 @@
-interface ActiveIngredient {
+export interface ActiveIngredient {
   name: string;
   strength: string;
 }
 
-interface Packaging {
+export interface Packaging {
   package_ndc: string;
   description: string;
   marketing_start_date: string;
   sample: boolean;
 }
 
-interface OpenFDA {
+export interface OpenFDA {
   manufacturer_name: string[];
   rxcui?: string[];
   spl_set_id?: string[];

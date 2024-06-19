@@ -6,72 +6,77 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  TablePagination,
 } from "@mui/material";
 import { Drug } from "../utils/ts/interfaces";
 import { useNavigate } from "react-router-dom";
 
-export const DrugsTable = ({ drugs }: { drugs: Drug[] }): JSX.Element => {
+interface DrugsTableProps {
+  drugs: Drug[];
+  page: number;
+  rowsPerPage: number;
+  onPageChange: (event: unknown, newPage: number) => void;
+  onRowsPerPageChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+}
+
+export const DrugsTable: React.FC<DrugsTableProps> = ({
+  drugs,
+  page,
+  rowsPerPage,
+  onPageChange,
+  onRowsPerPageChange,
+}) => {
   const navigate = useNavigate();
-  function handleClick(ncd: string) {
-    navigate(`/${ncd}`);
-  }
+
+  const handleDoubleClick = (productNdc: string) => {
+    navigate(`/drug/${productNdc}`);
+  };
 
   return (
     <>
-      {
-        drugs.length > 0 && (
+      {drugs.length > 0 && (
+        <>
           <TableContainer component={Paper}>
-            <Table sx={{ minWidth: 650 }} aria-label="simple table">
+            <Table stickyHeader>
               <TableHead>
                 <TableRow>
                   <TableCell>Product NDC</TableCell>
-                  <TableCell align="right">Brand Name</TableCell>
-                  <TableCell align="right">Generic Name</TableCell>
-                  {/* <TableCell align="right">Carbs&nbsp;(g)</TableCell>
-                  <TableCell align="right">Protein&nbsp;(g)</TableCell> */}
+                  <TableCell>Generic Name</TableCell>
+                  <TableCell>Brand Name</TableCell>
+                  <TableCell>Dosage Form</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {drugs.map((row) => (
-                  <TableRow
-                    key={row.product_ndc}
-                    sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                    onClick={() => handleClick(row.product_ndc)}
-                  >
-                    <TableCell component="th" scope="row">
-                      {row.product_ndc}
-                    </TableCell>
-                    <TableCell align="right">{row.brand_name}</TableCell>
-                    <TableCell align="right">{row.generic_name}</TableCell>
-                    {/* <TableCell align="right">{row.carbs}</TableCell>
-                    <TableCell align="right">{row.protein}</TableCell> */}
-                  </TableRow>
-                ))}
+                {drugs
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map((drug, index) => (
+                    <TableRow
+                      key={index}
+                      onDoubleClick={() =>
+                        handleDoubleClick(drug.product_ndc || "")
+                      }
+                      style={{ cursor: "pointer" }}
+                    >
+                      <TableCell>{drug.product_ndc || "N/A"}</TableCell>
+                      <TableCell>{drug.generic_name || "N/A"}</TableCell>
+                      <TableCell>{drug.brand_name || "N/A"}</TableCell>
+                      <TableCell>{drug.dosage_form || "N/A"}</TableCell>
+                    </TableRow>
+                  ))}
               </TableBody>
             </Table>
           </TableContainer>
-        )
-        //   (
-        //     <table>
-        //       <thead>
-        //         <tr>
-        //           <th>Product NDC</th>
-        //           <th>Brand Name</th>
-        //           <th>Generic Name</th>
-        //         </tr>
-        //       </thead>
-        //       <tbody>
-        //         {drugs.map((drug) => (
-        //           <tr key={drug.product_ndc}>
-        //             <td>{drug.product_ndc}</td>
-        //             <td>{drug.brand_name}</td>
-        //             <td>{drug.generic_name}</td>
-        //           </tr>
-        //         ))}
-        //       </tbody>
-        //     </table>
-        //   )
-      }
+          <TablePagination
+            rowsPerPageOptions={[5, 10, 25]}
+            component="div"
+            count={drugs.length}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onPageChange={onPageChange}
+            onRowsPerPageChange={onRowsPerPageChange}
+          />
+        </>
+      )}
     </>
   );
 };

@@ -9,7 +9,8 @@ export const PrincipalLayout = () => {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        height: "100vh",
+        minHeight: "100vh",
+        backgroundColor: "#f5f5f5",
       }}
     >
       <Outlet />

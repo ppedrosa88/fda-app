@@ -9,7 +9,7 @@ function App(): JSX.Element {
       <Routes>
         <Route element={<PrincipalLayout />}>
           <Route path="/" element={<Home />} />
-          <Route path="/:id" element={<DrugDetails />} />
+          <Route path="/drug/:id" element={<DrugDetails />} />
         </Route>
       </Routes>
     </BrowserRouter>

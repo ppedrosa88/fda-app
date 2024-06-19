@@ -1,74 +1,135 @@
-import { Grid, Typography } from "@mui/material";
-import { SearchBar } from "../components/SearchBar";
+import { Container, Box, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
-import { useDebounce } from "../hooks/useDebounce";
-import { searchDrugs } from "../utils/API/openFdaApi";
+import { useNavigate, useLocation } from "react-router-dom";
+import { fetchAllResults } from "../utils/API/openFdaApi";
 import { Drug } from "../utils/ts/interfaces";
 import { DrugsTable } from "../components/DrugsTable";
+import { SearchBar } from "../components/SearchBar";
+import { Loading } from "../components/Loading";
 
 export const Home = () => {
-  const [query, setQuery] = useState("");
+  const navigate = useNavigate();
+  const location = useLocation();
+  const queryParam = new URLSearchParams(location.search).get("query") || "";
+  const filterParam = new URLSearchParams(location.search).get("filter") || "";
+  const [query, setQuery] = useState(queryParam);
+  const [filter, setFilter] = useState(filterParam);
   const [drugs, setDrugs] = useState<Drug[]>([]);
-  //   const [selectedDrug, setSelectedDrug] = useState<Drug | null>(null);
-
-  const debouncedQuery = useDebounce(query, 500);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const handleSearch = async () => {
-      if (debouncedQuery) {
-        const results = await searchDrugs(debouncedQuery);
-        setDrugs(results);
+      if (!query) {
+        setDrugs([]);
+        setError(null);
+        return;
+      }
+
+      setIsLoading(true);
+      setError(null);
+
+      try {
+        if (query !== "") {
+          const results = await fetchAllResults(query, filter);
+          setDrugs(results);
+        }
+      } catch (err) {
+        if (err instanceof Error && err.message) {
+          setError(err.message);
+        } else {
+          setError("Error fetching drugs. Please try again later.");
+        }
+      } finally {
+        setIsLoading(false);
       }
     };
 
     handleSearch();
-  }, [debouncedQuery]);
+  }, [query, filter]);
 
-  const handleSearch = (query: string) => {
-    setQuery(query);
+  useEffect(() => {
+    const params = new URLSearchParams();
+    params.set("query", query);
+    params.set("filter", filter);
+    navigate({ search: params.toString() });
+  }, [query, navigate, filter]);
+
+  const handleSearch = (newQuery: string, newFilter: string) => {
+    setQuery(newQuery);
+    setFilter(newFilter);
+    setPage(0);
   };
 
-  //   const handleSelectDrug = (drug: Drug) => {
-  //     setSelectedDrug(drug);
-  //   };
+  const handleChangePage = (event: unknown, newPage: number) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
 
   return (
-    <Grid
-      container
+    <Container
+      maxWidth="xl"
       sx={{
-        height: "100vh",
+        minHeight: "100vh",
         display: "flex",
+        flexDirection: "column",
         justifyContent: "center",
+        alignItems: "center",
+        padding: 4,
+        backgroundColor: "#f5f5f5",
+        marginBottom: "10",
       }}
     >
-      <Grid
-        item
-        xs={12}
+      <Box
         sx={{
+          width: "100%",
           display: "flex",
-          justifyContent: "center",
-          //   alignItems: "center",
-          position: "sticky",
-          height: "100px",
+          flexDirection: "column",
+          alignItems: "center",
+          mb: 4,
         }}
       >
-        <Typography
-          variant="h4"
-          component="h1"
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          OpenFDA Drug Search
-        </Typography>
-        <SearchBar onSearch={handleSearch} />
-        {/* <pre>{JSON.stringify(drugs, null, 2)}</pre> */}
-      </Grid>
-      <Grid item xs={12}>
-        <DrugsTable drugs={drugs} />
-      </Grid>
-    </Grid>
+        <SearchBar onSearch={handleSearch} initialQuery={query} />
+      </Box>
+      <Box
+        sx={{
+          width: "100%",
+          flexGrow: 1,
+          backgroundColor: "#fff",
+          borderRadius: 2,
+          boxShadow: 3,
+          p: 2,
+        }}
+      >
+        {isLoading && <Loading />}
+        {!isLoading && drugs.length > 0 && !error && (
+          <DrugsTable
+            drugs={drugs}
+            page={page}
+            rowsPerPage={rowsPerPage}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+          />
+        )}
+        {!isLoading && drugs.length === 0 && (
+          <Typography color="textSecondary" align="center">
+            No drugs found.
+          </Typography>
+        )}
+        {error && (
+          <Typography color="error" align="center">
+            {error}
+          </Typography>
+        )}
+      </Box>
+    </Container>
   );
 };

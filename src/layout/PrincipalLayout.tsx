@@ -1,5 +1,5 @@
-import { Grid } from "@mui/material";
 import { Outlet } from "react-router-dom";
+import { Grid } from "@mui/material";
 
 export const PrincipalLayout = () => {
   return (
@@ -10,7 +10,7 @@ export const PrincipalLayout = () => {
         justifyContent: "center",
         alignItems: "center",
         minHeight: "100vh",
-        backgroundColor: "#f5f5f5",
+        backgroundColor: "#D0E5F0",
       }}
     >
       <Outlet />

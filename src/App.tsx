@@ -1,7 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+
 import { PrincipalLayout } from "./layout/PrincipalLayout";
-import { Home } from "./pages/Home";
-import { DrugDetails } from "./components/DrugDetails";
+import { Home, DrugDetails } from "./pages";
 
 function App(): JSX.Element {
   return (

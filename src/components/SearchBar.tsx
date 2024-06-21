@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import { useState } from "react";
+
 import {
   TextField,
   Button,
@@ -11,17 +12,13 @@ import {
   Container,
   Grid,
 } from "@mui/material";
-import { SearchFilter } from "../utils/ts/interfaces";
 
-interface SearchBarProps {
-  onSearch: (query: string, filter: SearchFilter) => void;
-  initialQuery?: string;
-}
+import { SearchBarProps, SearchFilter } from "../utils/ts/interfaces";
 
-export const SearchBar: React.FC<SearchBarProps> = ({
+export const SearchBar = ({
   onSearch,
   initialQuery = "",
-}) => {
+}: SearchBarProps): JSX.Element => {
   const [query, setQuery] = useState(initialQuery);
   const [filter, setFilter] = useState<SearchFilter>(SearchFilter.GENERIC_NAME);
 
@@ -40,7 +37,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
   };
 
   return (
-    <Container maxWidth="lg" sx={{ backgroundColor: "#f5f5f5", py: 2 }}>
+    <Container sx={{ backgroundColor: "white", py: 2, width: "100%" }}>
       <Box component="form" onSubmit={handleSubmit}>
         <Grid container spacing={2} alignItems="center">
           <Grid item xs={12} sm={4} md={3}>

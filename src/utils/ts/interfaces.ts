@@ -49,3 +49,21 @@ export interface Drug {
     GENERIC_NAME = "generic_name",
     BRAND_NAME = "brand_name",
   }
+
+  export interface DrugsTableProps {
+    drugs: Drug[];
+    page: number;
+    rowsPerPage: number;
+    onPageChange: (event: unknown, newPage: number) => void;
+    onRowsPerPageChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  }
+
+  export interface SearchBarProps {
+    onSearch: (query: string, filter: SearchFilter) => void;
+    initialQuery?: string;
+  }
+
+  export interface DrugRowProps {
+    drug: Drug;
+    onDoubleClick: (productNdc: string) => void;
+  }

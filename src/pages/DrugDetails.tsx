@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+
 import { useNavigate, useParams } from "react-router-dom";
-import { fetchByNdc } from "../utils/API/openFdaApi";
 import {
   Container,
   Card,
@@ -16,6 +16,8 @@ import {
   Button,
   Chip,
 } from "@mui/material";
+
+import { fetchByNdc } from "../utils/API/openFdaApi";
 import { Drug, Packaging } from "../utils/ts/interfaces";
 
 export const DrugDetails = () => {
@@ -71,7 +73,14 @@ export const DrugDetails = () => {
     return (
       <Container
         maxWidth="md"
-        style={{ marginTop: "2rem", marginBottom: "2rem" }}
+        style={{
+          marginTop: "2rem",
+          marginBottom: "2rem",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "end",
+        }}
       >
         <Button
           variant="contained"

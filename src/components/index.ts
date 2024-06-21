@@ -1,3 +1,4 @@
+export { RenderDrugDetails } from './RenderDrugDetails';
 export { DrugRow } from "./DrugRow";
 export { DrugsTable } from "./DrugsTable";
 export { Loading } from "./Loading";

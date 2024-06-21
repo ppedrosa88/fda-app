@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { FormEvent, useState } from "react";
 
 import {
   TextField,
@@ -22,16 +22,19 @@ export const SearchBar = ({
   const [query, setQuery] = useState(initialQuery);
   const [filter, setFilter] = useState<SearchFilter>(SearchFilter.GENERIC_NAME);
 
+  // Function to trigger the search action
   const handleSearch = () => {
     const queryTrimmed = query.trim();
     onSearch(queryTrimmed, filter);
   };
 
+  // Handler for when the filter selection changes
   const handleFilterChange = (e: SelectChangeEvent<SearchFilter>) => {
     setFilter(e.target.value as SearchFilter);
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  // Handler for form submission (triggered on "Enter" or clicking the Search button)
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     handleSearch();
   };

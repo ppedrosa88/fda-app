@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo, useCallback, ChangeEvent } from "react";
+import { useEffect, useState, useMemo, ChangeEvent } from "react";
 
 import { Container, Box } from "@mui/material";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -16,8 +16,9 @@ export const Home = (): JSX.Element => {
   const urlSearchParams = useMemo(
     () => new URLSearchParams(location.search),
     [location.search]
-  );
+  ); // Memoizing URL search parameters for optimization
 
+  // Retrieving query parameters from URL or setting defaults
   const queryParam = urlSearchParams.get("query") || "";
   const filterParam = urlSearchParams.get("filter") || "";
   const pageParam = urlSearchParams.get("page") || "0";
@@ -33,6 +34,7 @@ export const Home = (): JSX.Element => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Effect hook to fetch drugs based on query and filter when they change
   useEffect(() => {
     const fetchDrugs = async () => {
       if (!query) {
@@ -62,6 +64,7 @@ export const Home = (): JSX.Element => {
     fetchDrugs();
   }, [query, filter]);
 
+  // Effect hook to update URL with query parameters when they change
   useEffect(() => {
     const params = new URLSearchParams();
     params.set("query", query);
@@ -71,16 +74,19 @@ export const Home = (): JSX.Element => {
     navigate({ search: params.toString() });
   }, [query, navigate, filter, page, rowsPerPage]);
 
-  const handleSearch = useCallback((newQuery: string, newFilter: string) => {
+  // Event handler to update query and filter when search input changes
+  const handleSearch = (newQuery: string, newFilter: string) => {
     setQuery(newQuery);
     setFilter(newFilter);
     setPage(0);
-  }, []);
+  };
 
+  // Event handler to update page when page number changes
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
   };
 
+  // Event handler to update rows per page when rows per page changes
   const handleChangeRowsPerPage = (event: ChangeEvent<HTMLInputElement>) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);

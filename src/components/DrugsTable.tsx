@@ -9,27 +9,34 @@ import {
   TablePagination,
   Box,
 } from "@mui/material";
-import { useCallback } from "react";
+
 import { DrugsTableProps } from "../utils/ts/interfaces";
 import { useNavigate } from "react-router-dom";
 import { DrugRow } from "./DrugRow";
 
-export const DrugsTable: React.FC<DrugsTableProps> = ({
+/**
+ * DrugsTable Component
+ * @param drugs Array of drugs to display in the table
+ * @param page Current page index for pagination
+ * @param rowsPerPage Number of rows per page
+ * @param onPageChange Function for page change event
+ * @param onRowsPerPageChange Function for rows per page change event
+ */
+export const DrugsTable = ({
   drugs,
   page,
   rowsPerPage,
   onPageChange,
   onRowsPerPageChange,
-}) => {
+}: DrugsTableProps): JSX.Element => {
   const navigate = useNavigate();
 
-  const handleDoubleClick = useCallback(
-    (productNdc: string) => {
-      navigate(`/drug/${productNdc}`);
-    },
-    [navigate]
-  );
+  // Function to handle double-click event on a drug row
+  const handleDoubleClick = (productNdc: string) => {
+    navigate(`/drug/${productNdc}`);
+  };
 
+  // Slice the drugs array to get only the drugs for the current page
   const paginatedDrugs = drugs.slice(
     page * rowsPerPage,
     page * rowsPerPage + rowsPerPage
